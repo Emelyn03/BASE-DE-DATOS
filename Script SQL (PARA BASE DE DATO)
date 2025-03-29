@@ -1,0 +1,12 @@
+CREATE DATABASE CentralitaDB;
+
+USE CentralitaDB;
+
+CREATE TABLE Llamadas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numero_origen VARCHAR(15) NOT NULL,
+    numero_destino VARCHAR(15) NOT NULL,
+    duracion INT NOT NULL,
+    costo DECIMAL(10,2) NOT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
