@@ -1,0 +1,53 @@
+using System;
+using MySql.Data.MySqlClient;
+
+class CentralitaDB {
+    private string connectionString = "server=localhost;database=CentralitaDB;user=root;password=tu_contraseña;";
+
+    public void RegistrarLlamada(string origen, string destino, int duracion, double costo) {
+        using (MySqlConnection conn = new MySqlConnection(connectionString)) {
+            try {
+                conn.Open();
+                string query = "INSERT INTO Llamadas (numero_origen, numero_destino, duracion, costo) VALUES (@origen, @destino, @duracion, @costo)";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn)) {
+                    cmd.Parameters.AddWithValue("@origen", origen);
+                    cmd.Parameters.AddWithValue("@destino", destino);
+                    cmd.Parameters.AddWithValue("@duracion", duracion);
+                    cmd.Parameters.AddWithValue("@costo", costo);
+                    cmd.ExecuteNonQuery();
+                }
+                Console.WriteLine("Llamada registrada en la base de datos.");
+            } catch (Exception ex) {
+                Console.WriteLine("Error al registrar la llamada: " + ex.Message);
+            }
+        }
+    }
+
+    public void MostrarLlamadas() {
+        using (MySqlConnection conn = new MySqlConnection(connectionString)) {
+            try {
+                conn.Open();
+                string query = "SELECT * FROM Llamadas";
+                using (MySqlCommand cmd = new MySqlCommand(query, conn)) {
+                    using (MySqlDataReader reader = cmd.ExecuteReader()) {
+                        Console.WriteLine("Llamadas registradas:");
+                        while (reader.Read()) {
+                            Console.WriteLine($"ID: {reader["id"]}, Origen: {reader["numero_origen"]}, Destino: {reader["numero_destino"]}, Duración: {reader["duracion"]}s, Costo: {reader["costo"]}€");
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                Console.WriteLine("Error al mostrar llamadas: " + ex.Message);
+            }
+        }
+    }
+}
+
+class PracticaCentralita {
+    static void Main(string[] args) {
+        CentralitaDB centralitaDB = new CentralitaDB();
+        centralitaDB.RegistrarLlamada("123456789", "987654321", 120, 18.00);
+        centralitaDB.RegistrarLlamada("123456789", "654987321", 180, 36.00);
+        centralitaDB.MostrarLlamadas();
+    }
+}
